@@ -1,11 +1,13 @@
 from pathlib import Path
 import os
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw
 
 import nml
 
 SPRITE_SIZE = (20, 45)
-FONT = ImageFont.truetype("DejaVuSansCondensed.ttf", 12)
+NUMBERS_SHEET = Image.open('numbers.png')
+NUMBERS = [NUMBERS_SHEET.crop((i * 11, 0, i * 11 + 11, 11)) for i in range(20)]
+NUMBERS_MASK = [Image.eval(img, (lambda a: 255 if a == 1 else 1)).convert('1') for img in NUMBERS]
 
 
 class TreeSprite(nml.BaseSprite):
@@ -37,7 +39,8 @@ class TreeSprite(nml.BaseSprite):
         imd.rectangle((x + px, y + h - s - 1, x + w - px, y + h - 1), fill=color, outline=1)
         for i in range(self.stage - 1):
             imd.rectangle((x + px + 1 + i, y + h - s - i * 3 - 4, x + w - px - 1 - i, y + h - s - 1 - i * 3), fill=color, outline=1)
-        imd.text((x + w // 2, y + h - 2), str(self.index), font=FONT, fill=1, anchor='ms')
+        img.paste(NUMBERS[self.index], (x + px + 1, y + h - s), mask=NUMBERS_MASK[self.index])
+        # img.paste(NUMBERS[self.index], (x + px + 1, y + h - s))
 
     def get_nml(self):
         return (f'replace ({self.sprite_id}, "{self.file}") {{ [{self.x}, {self.y}, {self.w}, {self.h}, {self.ofs_x}, {self.ofs_y}] }}'
