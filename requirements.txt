@@ -1,0 +1,2 @@
+Pillow==8.4.0
+git+https://github.com/citymania-org/grf-py.git@a9f3a5a18f25f824cb07c932ec902d89bb74ba53#egg=grf
